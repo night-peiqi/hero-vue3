@@ -1,0 +1,22 @@
+{
+  "name": "hero-vue3",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "main": "index.js", 
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "execa": "^9.1.0",
+    "rollup": "^4.17.2",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.4.5"
+  }
+}

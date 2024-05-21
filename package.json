@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
-  "main": "index.js", 
+  "main": "index.js",
   "type": "module",
   "scripts": {
+    "dev": "node scripts/dev.js",
     "build": "node scripts/build.js"
   },
   "keywords": [],
@@ -15,8 +16,12 @@
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "execa": "^9.1.0",
+    "fs-extra": "^11.2.0",
     "rollup": "^4.17.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@hero-vue3/shared": "workspace:^"
   }
 }

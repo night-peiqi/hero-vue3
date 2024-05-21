@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@hero-vue3/shared':
+        specifier: workspace:^
+        version: link:packages/shared
     devDependencies:
       '@rollup/plugin-json':
         specifier: ^6.1.0
@@ -17,6 +21,9 @@ importers:
       execa:
         specifier: ^9.1.0
         version: 9.1.0
+      fs-extra:
+        specifier: ^11.2.0
+        version: 11.2.0
       rollup:
         specifier: ^4.17.2
         version: 4.17.2
@@ -304,6 +311,15 @@ packages:
   /fs-extra@10.1.0:
     resolution: {integrity: sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==}
     engines: {node: '>=12'}
+    dependencies:
+      graceful-fs: 4.2.11
+      jsonfile: 6.1.0
+      universalify: 2.0.1
+    dev: true
+
+  /fs-extra@11.2.0:
+    resolution: {integrity: sha512-PmDi3uwK5nFuXh7XDTlVnS17xJS7vW36is2+w3xcv8SVxiB4NyATf4ctkVY5bkSjX0Y4nbvZCq1/EjtEyr9ktw==}
+    engines: {node: '>=14.14'}
     dependencies:
       graceful-fs: 4.2.11
       jsonfile: 6.1.0

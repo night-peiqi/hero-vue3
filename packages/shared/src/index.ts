@@ -1,3 +1,8 @@
-const b = 10;
+/**
+ * 判断是不是对象
+ * @param value
+ * @returns boolean
+ */
+export const isObject = (value) => typeof value === 'object' && value !== null;
 
-export { b };
+export const extend = Object.assign;

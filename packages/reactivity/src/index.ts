@@ -1,6 +1,3 @@
-import { b } from "@hero-vue3/shared";
+export { reactive, shallowReactive, readonly, shallowReadonly } from './reactive';
 
-const a = 1;
-const c = 2;
-console.log('b', b)
-export { a, c, b };
+export { effect } from './effect';

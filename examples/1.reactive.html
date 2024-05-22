@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../packages/reactivity/dist/reactivity.global.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+      const { reactive, readonly, shallowReactive, effect } = HeroVue3Reactivity;
+      const state = reactive({
+        count: 0,
+        likes: { anny: 'anny', xiaomei: 'xiaomei', wifi: { a: 1, b: 2 } }
+      });
+
+      effect(() => {
+        console.log('state.count:', state.count);
+        // state.count++;
+      });
+
+      effect(() => {
+        console.log('state.count2:', state.count);
+        app.innerHTML = state.likes.anny;
+      });
+
+      setTimeout(() => {
+        state.likes.anny = 'night peiqi';
+      }, 1000);
+    </script>
+  </body>
+</html>

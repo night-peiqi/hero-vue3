@@ -7,7 +7,7 @@ const createGetter = (isReadonly = false, shallow = false) => {
   return function get(target, key, receiver) {
     const res = Reflect.get(target, key, receiver);
 
-    // TODO 如果不是只读的，就收集依赖
+    // 如果不是只读的，就收集依赖
     if (!isReadonly) {
       track(target, TrackOpTypes.GET, key);
     }

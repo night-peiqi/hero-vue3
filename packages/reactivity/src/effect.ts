@@ -35,9 +35,6 @@ function createReactiveEffect(fn, options) {
  * 每调用一次 effect 就会创建一个新的 effectFn
  * effect 中用到的所有响应式对象的属性都会收集(把属性和effectFn关联起来)
  * 当属性发生变化时，会执行属性关联的 effectFn 方法
- * @param fn
- * @param options
- * @returns
  */
 export function effect(fn, options) {
   const effectFn = createReactiveEffect(fn, options);

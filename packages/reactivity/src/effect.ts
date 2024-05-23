@@ -153,6 +153,8 @@ export function trigger(target, type, key, value?, oldValue?) {
         break;
     }
   }
+
+  console.log('finalEffects', finalEffects);
   // 执行 effect
   finalEffects.forEach((effect: any) => effect());
   console.log('执行了 effect');

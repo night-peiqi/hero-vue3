@@ -10,29 +10,46 @@
     <div id="app"></div>
 
     <script>
-      const { reactive, readonly, shallowReactive, effect } = HeroVue3Reactivity;
-      const state = reactive({
-        count: 0,
-        list: [1, 2, 3],
-        likes: { anny: 'anny', xiaomei: 'xiaomei', wifi: { a: 1, b: 2 } }
+      const { reactive, readonly, shallowReactive, effect, ref, toRef, toRefs } =
+        HeroVue3Reactivity;
+      // const state = reactive({
+      //   count: 0,
+      //   list: [1, 2, 3],
+      //   likes: { anny: 'anny', xiaomei: 'xiaomei', wifi: { a: 1, b: 2 } }
+      // });
+
+      // const myName = ref('neight peiqi');
+
+      const obj = { a: 1, b: 2 };
+
+      // const a = toRef(obj, 'a');
+      // console.log('a', a, obj);
+
+      const { a, b } = toRefs(obj);
+
+      effect(() => {
+        app.innerHTML = '' + a.value + b.value;
       });
 
       // effect(() => {
-      //   console.log('state.count:', state.list);
+      //   app.innerHTML = myName.value + a.value;
       // });
 
-      effect(() => {
-        app.innerHTML = '' + state.list;
-        // app.innerHTML = state.likes.wifi.a;
-        // app.innerHTML = state.count;
-      });
+      // effect(() => {
+      //   app.innerHTML = '' + state.list[2] + state.count;
+      //   // app.innerHTML = state.likes.wifi.a;
+      //   // app.innerHTML = state.count;
+      // });
 
       setTimeout(() => {
-        state.list[20] = 20;
+        // state.list[20] = 20;
         // state.count = 1;
         // state.list[2] = 4;
         // state.likes.wifi.a = 3;
         // state.likes.anny = 'night peiqi';
+        // myName.value = '熬夜佩奇';
+        a.value = 'Hell--';
+        b.value = 'toRefs';
       }, 1000);
     </script>
   </body>

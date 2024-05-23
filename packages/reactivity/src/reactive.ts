@@ -1,10 +1,10 @@
-import { isObject } from "@hero-vue3/shared";
+import { isObject } from '@hero-vue3/shared';
 import {
   reactiveHandlers,
   shallowReactiveHandlers,
   readonlyHandlers,
-  shallowReadonlyHandlers,
-} from "./baseHandlers";
+  shallowReadonlyHandlers
+} from './baseHandlers';
 
 export function reactive(target) {
   return createReactiveObject(target, false, reactiveHandlers);
@@ -37,10 +37,12 @@ function createReactiveObject(target, isReadonly, baseHandlers) {
   const proxyMap = isReadonly ? readonlyMap : reactiveMap;
   const existingProxy = proxyMap.get(target);
 
+  // 如果已经代理过了，直接返回
   if (existingProxy) {
     return existingProxy;
   }
 
+  // 创建代理对象并缓存 然后返回代理对象
   const proxy = new Proxy(target, baseHandlers);
   proxyMap.set(target, proxy);
   return proxy;

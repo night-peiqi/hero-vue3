@@ -1,7 +1,7 @@
-import { isObject } from '@hero-vue3/shared';
+import { hasChanged, hasOwn, isArray, isIntegerKey, isObject } from '@hero-vue3/shared';
 import { reactive, readonly } from './reactive';
-import { TrackOpTypes } from './operations';
-import { track } from './effect';
+import { TrackOpTypes, TriggerOpTypes } from './operations';
+import { track, trigger } from './effect';
 
 const createGetter = (isReadonly = false, shallow = false) => {
   return function get(target, key, receiver) {
@@ -26,9 +26,26 @@ const createGetter = (isReadonly = false, shallow = false) => {
 };
 
 const createSetter = (shallow = false) => {
-  return function set(target, key, value, receiver) {
+  return function (target, key, value, receiver) {
+    const oldValue = target[key];
+
+    // 判断target上有没有这个key
+    // target 为数组时，key为索引，且类型为字符串，需要转换为数字
+    const hasKey =
+      isArray(target) && isIntegerKey(key) ? Number(key) < target.length : hasOwn(target, key);
+
+    // 设置新值
     const result = Reflect.set(target, key, value, receiver);
-    // TODO 触发更新
+    console.log('hasKey', hasKey);
+    // 没有，代表新增，有，代表修改
+    if (!hasKey) {
+      trigger(target, TriggerOpTypes.ADD, key, value);
+    } else {
+      if (hasChanged(value, oldValue)) {
+        trigger(target, TriggerOpTypes.SET, key, value, oldValue);
+      }
+    }
+
     return result;
   };
 };

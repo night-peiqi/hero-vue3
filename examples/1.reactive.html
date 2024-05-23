@@ -13,21 +13,26 @@
       const { reactive, readonly, shallowReactive, effect } = HeroVue3Reactivity;
       const state = reactive({
         count: 0,
+        list: [1, 2, 3],
         likes: { anny: 'anny', xiaomei: 'xiaomei', wifi: { a: 1, b: 2 } }
       });
 
-      effect(() => {
-        console.log('state.count:', state.count);
-        // state.count++;
-      });
+      // effect(() => {
+      //   console.log('state.count:', state.list);
+      // });
 
       effect(() => {
-        console.log('state.count2:', state.count);
-        app.innerHTML = state.likes.anny;
+        app.innerHTML = '' + state.list;
+        // app.innerHTML = state.likes.wifi.a;
+        // app.innerHTML = state.count;
       });
 
       setTimeout(() => {
-        state.likes.anny = 'night peiqi';
+        state.list[20] = 20;
+        // state.count = 1;
+        // state.list[2] = 4;
+        // state.likes.wifi.a = 3;
+        // state.likes.anny = 'night peiqi';
       }, 1000);
     </script>
   </body>

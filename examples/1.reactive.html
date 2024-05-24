@@ -10,7 +10,7 @@
     <div id="app"></div>
 
     <script>
-      const { reactive, readonly, shallowReactive, effect, ref, toRef, toRefs } =
+      const { reactive, readonly, shallowReactive, effect, ref, toRef, toRefs, computed } =
         HeroVue3Reactivity;
       // const state = reactive({
       //   count: 0,
@@ -18,18 +18,31 @@
       //   likes: { anny: 'anny', xiaomei: 'xiaomei', wifi: { a: 1, b: 2 } }
       // });
 
-      // const myName = ref('neight peiqi');
+      const myName = ref('neight peiqi');
 
-      const obj = { a: 1, b: 2 };
+      // const obj = { a: 1, b: 2 };
 
       // const a = toRef(obj, 'a');
       // console.log('a', a, obj);
 
-      const { a, b } = toRefs(obj);
+      // const { a, b } = toRefs(obj);
+
+      const cc = computed(() => {
+        console.log('computed 执行', myName.value);
+        return myName.value + ' computed';
+      });
 
       effect(() => {
-        app.innerHTML = '' + a.value + b.value;
+        console.log('使用计算属性的地方', cc.value);
+        app.innerHTML = '' + cc.value;
       });
+
+      effect(
+        () => {
+          console.log('myName.value', myName.value);
+        },
+        { aa: 'aa' }
+      );
 
       // effect(() => {
       //   app.innerHTML = myName.value + a.value;
@@ -48,8 +61,10 @@
         // state.likes.wifi.a = 3;
         // state.likes.anny = 'night peiqi';
         // myName.value = '熬夜佩奇';
-        a.value = 'Hell--';
-        b.value = 'toRefs';
+        // a.value = 'Hello--';
+        // b.value = 'toRefs';
+        myName.value = '熬夜佩奇';
+        console.log('cc4', cc.value);
       }, 1000);
     </script>
   </body>

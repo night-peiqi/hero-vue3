@@ -8,15 +8,15 @@ let activeEffect: any;
 const effectStack: any[] = [];
 
 function createReactiveEffect(fn, options) {
-  // 最终返回 _fn 函数，vue 中使用 effect 时就是执行的 _fn 函数
-  const _fn = function reactiveEffect() {
-    if (!effectStack.includes(_fn)) {
+  // 响应式副作用函数
+  function reactiveEffect() {
+    if (!effectStack.includes(reactiveEffect)) {
       // 执行新的 effect 时，将 activeEffect 设置为当前 effect，并将 effect 入栈
       try {
-        activeEffect = _fn;
+        activeEffect = reactiveEffect;
         // 入栈
         effectStack.push(activeEffect);
-        fn();
+        return fn();
       } finally {
         // 出栈
         // effect 中嵌套 effect 时，内部 effect 执行完毕后，将 activeEffect 恢复为外部 effect
@@ -24,26 +24,28 @@ function createReactiveEffect(fn, options) {
         activeEffect = effectStack[effectStack.length - 1];
       }
     }
-  };
+  }
 
-  _fn.id = uid++;
-  _fn._isEffect = true;
-  _fn.raw = fn; // 保存原始函数
-  _fn.options = options; // 保存配置项
-  return _fn;
+  reactiveEffect.id = uid++;
+  reactiveEffect._isEffect = true;
+  reactiveEffect.raw = fn; // 保存原始函数
+  reactiveEffect.options = options; // 保存传入的配置项
+  return reactiveEffect;
 }
 
 /**
- * effect 函数
- * 每调用一次 effect 就会创建一个新的 effectFn
- * effect 中用到的所有响应式对象的属性都会收集(把属性和effectFn关联起来)
- * 当属性发生变化时，会执行属性关联的 effectFn 方法
+ * 创建并执行一个响应式副作用（reactive effect）
+ * efect 的作用就是把 fn 赋值给 activeEffect，然后执行 fn 并返回 fn 的执行结果
+ * 在执行 fn 的过程中，fn 中用到的响应式对象属性会把 activeEffect 收集为依赖
+ * @param {Function} fn - 需要执行的函数，这个函数中用到的响应式对象属性会被自动收集为依赖。
+ * @param {Object} options - 可选的配置对象。如果 `options.lazy` 为 `true`，则 `fn` 不会立即执行。
+ * @returns {Function} 返回创建的响应式副作用函数。当依赖项改变时，这个函数会自动重新执行
  */
-export function effect(fn, options) {
+export function effect(fn, options: any = {}) {
   const effectFn = createReactiveEffect(fn, options);
 
   // 默认立即执行一次 fn，fn 中用到的响应式对象属性会收集依赖
-  if (!options || !options.lazy) {
+  if (!options.lazy) {
     effectFn();
   }
 
@@ -155,7 +157,17 @@ export function trigger(target, type, key, value?, oldValue?) {
   }
 
   console.log('finalEffects', finalEffects);
-  // 执行 effect
-  finalEffects.forEach((effect: any) => effect());
+
+  /**
+   * 执行所有 effect
+   * 如果 effect 有配置项 options.scheduler，则执行 options.scheduler(effect)
+   */
+  finalEffects.forEach((effect: any) => {
+    if (effect.options.scheduler) {
+      effect.options.scheduler(effect);
+    } else {
+      effect();
+    }
+  });
   console.log('执行了 effect');
 }

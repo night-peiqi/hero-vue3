@@ -65,12 +65,10 @@ class ObjectRefImpl {
   }
 
   get value() {
-    track(this, TrackOpTypes.GET, this.key);
     return this.target[this.key];
   }
 
   set value(newValue) {
-    this.target[this.key] = newValue;
     trigger(this, TriggerOpTypes.SET, this.key, newValue);
   }
 }

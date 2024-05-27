@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="app">ceshi</div>
+    <script src="../packages/runtime-dom/dist/runtime-dom.global.js"></script>
+    <script>
+      const { createApp, h } = HeroVue3RuntimeDom;
+      const App = {
+        render() {
+          console.log('render');
+          // return h('div', null, 'HeroVue3RuntimeDom');
+        }
+      };
+
+      createApp(App, { name: '熬夜佩奇' }).mount('#app');
+    </script>
+  </body>
+</html>

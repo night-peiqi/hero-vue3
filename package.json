@@ -22,6 +22,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@hero-vue3/shared": "workspace:^"
+    "@herovue3/runtime-core": "workspace:^",
+    "@herovue3/shared": "workspace:^"
   }
 }

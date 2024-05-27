@@ -1,3 +1,4 @@
+export * from './shapeFlags';
 /**
  * 判断是不是对象
  * @param value

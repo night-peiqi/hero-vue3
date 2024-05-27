@@ -1,1 +1,1 @@
-export const b = 'b';
+export { createRenderer } from './renderer';

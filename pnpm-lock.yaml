@@ -8,7 +8,10 @@ importers:
 
   .:
     dependencies:
-      '@hero-vue3/shared':
+      '@herovue3/runtime-core':
+        specifier: workspace:^
+        version: link:packages/runtime-core
+      '@herovue3/shared':
         specifier: workspace:^
         version: link:packages/shared
     devDependencies:
@@ -35,6 +38,10 @@ importers:
         version: 5.4.5
 
   packages/reactivity: {}
+
+  packages/runtime-core: {}
+
+  packages/runtime-dom: {}
 
   packages/shared: {}
 

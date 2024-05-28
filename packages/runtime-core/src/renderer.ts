@@ -7,6 +7,18 @@ import { createAppAPI } from './apiCreateApp';
  * @returns 渲染器对象
  */
 export function createRenderer(renderOptionDom) {
+  const mountComponent = (n2, container) => {};
+
+  const processComponent = (n1, n2, container) => {
+    if (n1 == null) {
+      // 初始化组件
+      mountComponent(n2, container);
+    } else {
+      // 更新组件
+      // updateComponent(n1, n2, container);
+    }
+  };
+
   /**
    * patch 方法
    * @param n1 旧的 vnode
@@ -23,7 +35,7 @@ export function createRenderer(renderOptionDom) {
     if (shapeFlag & ShapeFlags.ELEMENT) {
       // processElement(n1, n2, container);
     } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-      // processComponent(n1, n2, container);
+      processComponent(n1, n2, container);
     }
   };
 

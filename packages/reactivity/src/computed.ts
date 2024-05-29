@@ -1,4 +1,4 @@
-import { isFunction } from '@hero-vue3/shared';
+import { isFunction } from '@herovue3/shared';
 import { effect, track, trigger } from './effect';
 import { TrackOpTypes, TriggerOpTypes } from './operations';
 

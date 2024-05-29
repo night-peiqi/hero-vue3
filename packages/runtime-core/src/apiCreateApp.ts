@@ -1,4 +1,4 @@
-import { groupEnd, groupLog, log } from '@hero-vue3/shared';
+import { groupEnd, groupLog, log } from '@herovue3/shared';
 import { createVnode } from './vnode';
 
 /**

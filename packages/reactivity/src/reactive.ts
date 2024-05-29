@@ -1,4 +1,4 @@
-import { isObject } from '@hero-vue3/shared';
+import { isObject } from '@herovue3/shared';
 import {
   reactiveHandlers,
   shallowReactiveHandlers,

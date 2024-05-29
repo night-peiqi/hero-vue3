@@ -9,26 +9,39 @@
     <div id="app">ceshi</div>
     <script src="../../packages/runtime-dom/dist/runtime-dom.global.js"></script>
     <script>
-      const { createApp, h } = HeroVue3RuntimeDom;
+      const { createApp, h, reactive } = HeroVue3RuntimeDom;
       const App = {
         setup(props, ctx) {
-          console.log('setup', props, ctx);
-          // return { name: props.name };
-          // return function (props) {
-          //   console.log('render函数1', this, props);
-          //   // return h('div', { style: props.style }, 'HeroVue3RuntimeDom');
-          // };
-        },
-        render(props) {
-          console.log('render函数2');
-          return h(
-            'div',
-            { style: { color: 'red' }, class: 'test', 'data-attr': 'attr' },
-            'children1',
-            'children2',
-            h('div', { style: { color: 'blue' } }, 'children3')
-          );
+          const state = reactive({ name: 'night-peiqi' });
+
+          const clickHandler = () => {
+            console.log('clickHandler');
+            state.name = '熬夜佩奇';
+          };
+
+          return () =>
+            h(
+              'div',
+              {
+                style: { color: 'red' },
+                class: 'test',
+                'data-attr': 'attr',
+                onClick: clickHandler
+              },
+              state.name,
+              'children2',
+              h('div', { style: { color: 'blue' } }, 'children3')
+            );
         }
+        // render(props) {
+        //   return h(
+        //     'div',
+        //     { style: { color: 'red' }, class: 'test', 'data-attr': 'attr' },
+        //     props.state.name,
+        //     'children2',
+        //     h('div', { style: { color: 'blue' } }, 'children3')
+        //   );
+        // }
       };
 
       createApp(App, { name: '熬夜佩奇', style: { color: 'green' } }).mount('#app');

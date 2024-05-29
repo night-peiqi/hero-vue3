@@ -1,4 +1,4 @@
-import { ShapeFlags, isFunction, isObject, log } from '@hero-vue3/shared';
+import { ShapeFlags, isFunction, isObject, log } from '@herovue3/shared';
 import { PublicInstanceProxyHandlers } from './componentPublicInstance';
 
 /**

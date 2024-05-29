@@ -1,5 +1,5 @@
-import { extend } from '@hero-vue3/shared';
-import { createRenderer } from '@hero-vue3/runtime-core';
+import { extend } from '@herovue3/shared';
+import { createRenderer } from '@herovue3/runtime-core';
 import { nodeOps } from './nodeOps';
 import { patchProps } from './patchProps';
 
@@ -30,4 +30,4 @@ export const createApp = (rootComponent, rootProps) => {
 
 export { renderOptionDom };
 
-export * from '@hero-vue3/runtime-core';
+export * from '@herovue3/runtime-core';

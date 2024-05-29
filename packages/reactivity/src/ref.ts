@@ -1,4 +1,4 @@
-import { hasChanged, isArray } from '@hero-vue3/shared';
+import { hasChanged, isArray } from '@herovue3/shared';
 import { track, trigger } from './effect';
 import { TrackOpTypes, TriggerOpTypes } from './operations';
 

@@ -1,4 +1,4 @@
-import { isArray, isIntegerKey } from '@hero-vue3/shared';
+import { isArray, isIntegerKey } from '@herovue3/shared';
 import { TriggerOpTypes } from './operations';
 
 let uid = 0;

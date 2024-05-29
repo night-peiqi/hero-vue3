@@ -1,4 +1,4 @@
-import { hasChanged, hasOwn, isArray, isIntegerKey, isObject } from '@hero-vue3/shared';
+import { hasChanged, hasOwn, isArray, isIntegerKey, isObject } from '@herovue3/shared';
 import { reactive, readonly } from './reactive';
 import { TrackOpTypes, TriggerOpTypes } from './operations';
 import { track, trigger } from './effect';

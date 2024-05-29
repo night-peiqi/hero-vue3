@@ -1,4 +1,4 @@
-import { isObject, isVnode } from '@hero-vue3/shared';
+import { isObject, isVnode } from '@herovue3/shared';
 import { createVnode } from './vnode';
 
 /**

@@ -9,7 +9,7 @@
     "moduleResolution": "node10",
     "baseUrl": ".",
     "paths": {
-      "@hero-vue3/*": ["packages/*/src"]
+      "@herovue3/*": ["packages/*/src"]
     },
 
     /* JavaScript Support */

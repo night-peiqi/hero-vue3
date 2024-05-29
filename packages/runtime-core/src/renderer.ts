@@ -1,7 +1,7 @@
-import { ShapeFlags, log } from '@hero-vue3/shared';
+import { ShapeFlags, log } from '@herovue3/shared';
 import { createAppAPI } from './apiCreateApp';
 import { createComponentInstance, setupComponent } from './component';
-import { effect } from '@hero-vue3/reactivity';
+import { effect } from '@herovue3/reactivity';
 import { CVnode, Text } from './vnode';
 
 /**
@@ -133,9 +133,11 @@ export function createRenderer(renderOptionDom): any {
         const subTree = instance.render.call(proxy, proxy);
         // 将虚拟dom渲染到页面中
         patch(null, subTree, container);
+        instance.isMounted = true;
       } else {
         // 更新组件
-        instance.render = instance.type.render(instance.props, instance.ctx);
+        // instance.render = instance.type.render(instance.props, instance.ctx);
+        log('/** 更新组件 setupRenderEffect **/');
       }
     });
   }

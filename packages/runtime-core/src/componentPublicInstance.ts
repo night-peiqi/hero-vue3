@@ -1,4 +1,4 @@
-import { hasOwn } from '@hero-vue3/shared';
+import { hasOwn } from '@herovue3/shared';
 
 /**
  * 公共实例代理处理程序

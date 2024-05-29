@@ -1,4 +1,4 @@
-import { ShapeFlags, isObject, isString, log } from '@hero-vue3/shared';
+import { ShapeFlags, isObject, isString, log } from '@herovue3/shared';
 
 interface IComponentType {
   setup: Function;

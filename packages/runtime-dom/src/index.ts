@@ -29,3 +29,5 @@ export const createApp = (rootComponent, rootProps) => {
 };
 
 export { renderOptionDom };
+
+export * from '@hero-vue3/runtime-core';

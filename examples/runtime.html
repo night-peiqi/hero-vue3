@@ -7,17 +7,31 @@
   </head>
   <body>
     <div id="app">ceshi</div>
-    <script src="../packages/runtime-dom/dist/runtime-dom.global.js"></script>
+    <script src="../../packages/runtime-dom/dist/runtime-dom.global.js"></script>
     <script>
       const { createApp, h } = HeroVue3RuntimeDom;
       const App = {
-        render() {
-          console.log('render');
-          // return h('div', null, 'HeroVue3RuntimeDom');
+        setup(props, ctx) {
+          console.log('setup', props, ctx);
+          // return { name: props.name };
+          // return function (props) {
+          //   console.log('render函数1', this, props);
+          //   // return h('div', { style: props.style }, 'HeroVue3RuntimeDom');
+          // };
+        },
+        render(props) {
+          console.log('render函数2');
+          return h(
+            'div',
+            { style: { color: 'red' }, class: 'test', 'data-attr': 'attr' },
+            'children1',
+            'children2',
+            h('div', { style: { color: 'blue' } }, 'children3')
+          );
         }
       };
 
-      createApp(App, { name: '熬夜佩奇' }).mount('#app');
+      createApp(App, { name: '熬夜佩奇', style: { color: 'green' } }).mount('#app');
     </script>
   </body>
 </html>

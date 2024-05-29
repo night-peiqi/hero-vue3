@@ -1,3 +1,5 @@
+import chalk from 'chalk';
+
 export * from './shapeFlags';
 /**
  * 判断是不是对象
@@ -17,6 +19,12 @@ export const isString = (val) => typeof val === 'string';
 export const isSymbol = (val) => typeof val === 'symbol';
 
 export const isNumber = (val) => typeof val === 'number';
+
+export const isVnode = (val) => val._v_isVNode;
+
+export const groupLog = (msg, ...args) => console.group(chalk.cyan(msg), ...args);
+export const log = (msg, ...args) => console.log('\r\n' + chalk.green(msg), ...args);
+export const groupEnd = () => console.groupEnd();
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 /**

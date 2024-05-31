@@ -12,33 +12,59 @@
       const { createApp, h, reactive } = HeroVue3RuntimeDom;
       const App = {
         setup(props, ctx) {
-          const state = reactive({ name: 'night-peiqi' });
+          const state = reactive({ name: 'night-peiqi', isFlag: false });
 
           const clickHandler = () => {
             console.log('clickHandler');
             state.name = '熬夜佩奇';
           };
 
-          return () =>
-            h(
-              'div',
-              {
-                style: { color: 'red' },
-                class: 'test',
-                'data-attr': 'attr',
-                onClick: clickHandler
-              },
-              state.name,
-              'children2',
-              h('div', { style: { color: 'blue' } }, 'children3')
-            );
+          setTimeout(() => {
+            state.isFlag = true;
+          }, 3000);
+
+          // return {
+          //   state,
+          //   clickHandler
+          // };
+
+          return () => {
+            return state.isFlag
+              ? h(
+                  'div',
+                  {
+                    style: { color: 'green' },
+                    class: 'test1',
+                    'data-attr': 'attr1',
+                    onClick: clickHandler
+                  },
+                  [
+                    h('div', { key: 'a' }, '熬夜佩奇a'),
+                    h('div', { key: 'b' }, '熬夜佩奇b'),
+                    h('div', { key: 'c' }, '熬夜佩奇c')
+                  ]
+                )
+              : h(
+                  'div',
+                  {
+                    style: { color: 'red' },
+                    class: 'test2',
+                    'data-attr': 'attr2',
+                    onClick: clickHandler
+                  },
+                  [
+                    h('div', { key: 'a' }, 'Alice-a'),
+                    h('div', { key: 'c' }, 'Alice-c'),
+                    h('div', { key: 'b' }, 'Alice-b'),
+                    h('div', { key: 'd' }, '熬夜佩奇d')
+                  ]
+                );
+          };
         }
         // render(props) {
         //   return h(
         //     'div',
         //     { style: { color: 'red' }, class: 'test', 'data-attr': 'attr' },
-        //     props.state.name,
-        //     'children2',
         //     h('div', { style: { color: 'blue' } }, 'children3')
         //   );
         // }

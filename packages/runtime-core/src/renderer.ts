@@ -3,6 +3,7 @@ import { createAppAPI } from './apiCreateApp';
 import { createComponentInstance, setupComponent } from './component';
 import { effect } from '@herovue3/reactivity';
 import { CVnode, Text } from './vnode';
+import { patchProps } from 'packages/runtime-dom/src/patchProps';
 
 /**
  * 创建渲染器
@@ -29,13 +30,166 @@ export function createRenderer(renderOptionDom): any {
    * @param n2
    * @param container
    */
-  function processElement(n1, n2, container) {
+  function processElement(n1, n2, container, anther) {
     if (n1 == null) {
       // 初始化元素
-      mountElement(n2, container);
+      mountElement(n2, container, anther);
     } else {
-      // 更新元素
-      // updateElement(n1, n2);
+      // 更新属性
+      patchElement(n1, n2, container, anther);
+    }
+  }
+
+  /**
+   * 同样的元素比对
+   * @param n1
+   * @param n2
+   * @param container
+   */
+  function patchElement(n1, n2, container, anther) {
+    const el = (n2.el = n1.el);
+    const oldProps = n1.props || {};
+    const newProps = n2.props || {};
+
+    patchProps(el, oldProps, newProps);
+
+    patchChildren(n1, n2, el);
+  }
+
+  /**
+   * 比对子节点
+   * @param n1
+   * @param n2
+   * @param el
+   */
+  function patchChildren(n1, n2, el) {
+    const c1 = n1.children;
+    const c2 = n2.children;
+
+    const prevShapeFlag = n1.shapeFlag;
+    const newShapeFlag = n2.shapeFlag;
+
+    if (newShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      // 新的子节点是文本节点
+      if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+        if (c2 !== c1) {
+          hostSetElementText(el, c2);
+        }
+      } else {
+        hostSetElementText(el, c2);
+      }
+    } else {
+      // 新的子节点是数组，且旧的子节点是文本节点
+      if (prevShapeFlag & ShapeFlags.TEXT_CHILDREN) {
+        // 清空旧的文本节点
+        hostSetElementText(el, '');
+        // 挂载新的子节点
+        mountChildren(el, c2);
+      } else {
+        // 新旧子节点都是数组，进行 diff 操作
+        patchKeyedChildren(c1, c2, el);
+      }
+    }
+  }
+
+  /**
+   * vue3 的 diff 算法，“双端比较”
+   * 这种算法的基本思想是：同时从新旧两个数组的两端开始比较。如果从两端开始的节点都相同，那么就直接移动到下一个节点。如果不同，那么就尝试从另一端进行比较
+   * 这种方法可以有效地处理节点的移动和重排序
+   * @param c1
+   * @param c2
+   * @param el
+   */
+  function patchKeyedChildren(c1, c2, el) {
+    let i = 0;
+    let e1 = c1.length - 1; // 旧子节点的结束索引
+    let e2 = c2.length - 1; // 新子节点的结束索引
+
+    // 从头部开始比较，直到 i 大于 e1 或 e2
+    while (i <= e1 && i <= e2) {
+      const n1 = c1[i];
+      const n2 = c2[i];
+      if (isSameVNodeType(n1, n2)) {
+        patch(n1, n2, el);
+      } else {
+        break;
+      }
+      i++;
+    }
+
+    // 从尾部开始比较，此时 i 已经是从头部开始比较后的索引
+    while (i <= e1 && i <= e2) {
+      const n1 = c1[e1];
+      const n2 = c2[e2];
+      if (isSameVNodeType(n1, n2)) {
+        patch(n1, n2, el);
+      } else {
+        break;
+      }
+      e1--;
+      e2--;
+    }
+
+    // 此时 i 是从头部开始比较后的索引，e1 和 e2 是从尾部开始比较后的索引
+    // 新子节点多于旧子节点，挂载新节点
+    if (i > e1) {
+      // 插入新节点的位置
+      const nextPos = e2 + 1;
+      const anther = nextPos < c2.length ? c2[nextPos].el : null;
+
+      while (i <= e2) {
+        patch(null, c2[i], el, anther);
+        i++;
+      }
+    } else if (i > e2) {
+      // 旧子节点多于新子节点，卸载多余的节点
+      while (i <= e1) {
+        unmount(c1[i]);
+        i++;
+      }
+    } else {
+      // 乱序比对
+      let s1 = i;
+      let s2 = i;
+
+      // 创建新子节点的 key 与索引的映射
+      const keyToNewIndexMap = new Map();
+
+      for (let i = s2; i <= e2; i++) {
+        // 遍历新子节点，将 key 与索引对应起来
+        const nextChild = c2[i];
+        keyToNewIndexMap.set(nextChild.key, i);
+      }
+
+      log('/** keyToNewIndexMap **/', keyToNewIndexMap);
+    }
+  }
+
+  /**
+   * 更新属性
+   * @param el
+   * @param oldProps
+   * @param newProps
+   */
+  function patchProps(el, oldProps, newProps) {
+    if (oldProps !== newProps) {
+      // 遍历新的属性
+      for (const key in newProps) {
+        const prev = oldProps[key];
+        const next = newProps[key];
+        if (prev !== next) {
+          // 新旧值不相同，则更新属性
+          hostPatchProp(el, key, prev, next);
+        }
+      }
+
+      // 遍历旧的属性
+      for (const key in oldProps) {
+        if (!(key in newProps)) {
+          // 旧属性在新属性中不存在，则移除属性
+          hostPatchProp(el, key, oldProps[key], null);
+        }
+      }
     }
   }
 
@@ -44,9 +198,9 @@ export function createRenderer(renderOptionDom): any {
    * @param vnode
    * @param container
    */
-  function mountElement(vnode, container) {
+  function mountElement(vnode, container, anther) {
     const { type, props, children, shapeFlag } = vnode;
-    // 创建元素
+    // 创建元素并保存到 vnode.el
     const el = (vnode.el = hostCreateElement(type));
     // 设置属性
     if (props) {
@@ -67,7 +221,7 @@ export function createRenderer(renderOptionDom): any {
     }
 
     // 插入到容器中
-    hostInsert(el, container);
+    hostInsert(el, container, anther);
   }
 
   /**
@@ -104,6 +258,7 @@ export function createRenderer(renderOptionDom): any {
    */
   function processComponent(n1, n2, container) {
     if (n1 == null) {
+      log('/** 初始化组件 processComponent **/', n2);
       // 初始化组件
       mountComponent(n2, container);
     } else {
@@ -130,29 +285,51 @@ export function createRenderer(renderOptionDom): any {
       if (!instance.isMounted) {
         const proxy = instance.proxy;
         // 执行 render 函数，返回虚拟dom
-        const subTree = instance.render.call(proxy, proxy);
+        log('/** 初始化组件 setupRenderEffect **/', instance);
+        const subTree = (instance.subTree = instance.render.call(proxy, proxy));
+        log('/** 初始化组件 setupRenderEffect subTree **/', subTree);
         // 将虚拟dom渲染到页面中
         patch(null, subTree, container);
         instance.isMounted = true;
       } else {
         // 更新组件
         // instance.render = instance.type.render(instance.props, instance.ctx);
-        log('/** 更新组件 setupRenderEffect **/');
+        const proxy = instance.proxy;
+        const prevSubTree = instance.subTree;
+        const nextSubTree = instance.render.call(proxy, proxy);
+        instance.subTree = nextSubTree;
+        log('/** 更新组件 setupRenderEffect **/', prevSubTree, nextSubTree);
+        patch(prevSubTree, nextSubTree, container);
       }
     });
   }
 
+  function isSameVNodeType(n1, n2) {
+    return n1 && n2 && n1.type === n2.type && n1.key === n2.key;
+  }
+
+  function unmount(vnode) {
+    log('/** 执行 unmount **/', vnode);
+    hostRemove(vnode.el);
+  }
+
   /**
-   * patch 方法
+   * patch 方法，递归对比新旧 vnode，同时更新 DOM
    * @param n1 旧的 vnode
    * @param n2 新的 vnode
    * @param container render 的容器
    * @returns
    */
-  function patch(n1, n2, container) {
-    if (n1 === n2) {
-      return;
+  function patch(n1, n2, container, anther = null) {
+    /**
+     * n1 存在，且 n1 和 n2 不是相同的节点
+     * 则卸载 n1，重新挂载 n2
+     */
+    if (n1 && !isSameVNodeType(n1, n2)) {
+      unmount(n1);
+      n1 = null;
     }
+
     const { type, shapeFlag } = n2;
     // log('/** 执行 patch **/', type, n2.children);
 
@@ -168,7 +345,7 @@ export function createRenderer(renderOptionDom): any {
          * 如果 shapeFlag 包含 ShapeFlags.ELEMENT 标志位，则表示是元素节点，例如 div、span 等
          */
         if (shapeFlag & ShapeFlags.ELEMENT) {
-          processElement(n1, n2, container);
+          processElement(n1, n2, container, anther);
         } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
           // patch 组件
           processComponent(n1, n2, container);

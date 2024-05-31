@@ -89,7 +89,7 @@ function createSetupContext(instance) {
  * @param setupResult setup 返回值
  */
 function handleSetupResult(instance, setupResult) {
-  log('/** 执行 handleSetupResult 处理 setup 返回值 **/');
+  log('/** 执行 handleSetupResult 处理 setup 返回值 **/', instance, setupResult);
   if (isFunction(setupResult)) {
     instance.render = setupResult;
   } else if (isObject(setupResult)) {
@@ -105,7 +105,7 @@ function handleSetupResult(instance, setupResult) {
  */
 function finishComponentSetup(instance) {
   const Component = instance.type;
-
+  log('/** 执行 finishComponentSetup 完成组件设置 **/', instance);
   if (!instance.render) {
     // 如果组件没有 render 函数，则使用 template
     if (!Component.render && Component.template) {
@@ -113,6 +113,4 @@ function finishComponentSetup(instance) {
 
     instance.render = Component.render;
   }
-
-  log('/** 执行 finishComponentSetup 完成组件设置 **/');
 }

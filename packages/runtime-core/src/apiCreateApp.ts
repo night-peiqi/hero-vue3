@@ -8,7 +8,7 @@ import { createVnode } from './vnode';
  */
 export function createAppAPI(render) {
   return function createApp(rootComponent, rootProps) {
-    log('/** 执行 createAppAPI 创建应用程序实例 **/');
+    // log('/** 执行 createAppAPI 创建应用程序实例 **/');
     let app = {
       _component: rootComponent,
       _props: rootProps,
@@ -24,7 +24,7 @@ export function createAppAPI(render) {
       }
     };
 
-    log('/** 返回 app **/', app);
+    // log('/** 返回 app **/', app);
     return app;
   };
 }

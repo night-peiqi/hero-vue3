@@ -28,21 +28,21 @@
       // const { a, b } = toRefs(obj);
 
       const cc = computed(() => {
-        console.log('computed 执行', myName.value);
+        // console.log('computed 执行', myName.value);
         return myName.value + ' computed';
       });
 
       effect(() => {
-        console.log('使用计算属性的地方', cc.value);
+        // console.log('使用计算属性的地方', cc.value);
         app.innerHTML = '' + cc.value;
       });
 
-      effect(
-        () => {
-          console.log('myName.value', myName.value);
-        },
-        { aa: 'aa' }
-      );
+      // effect(
+      //   () => {
+      //     console.log('myName.value', myName.value);
+      //   },
+      //   { aa: 'aa' }
+      // );
 
       // effect(() => {
       //   app.innerHTML = myName.value + a.value;

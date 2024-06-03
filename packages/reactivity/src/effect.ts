@@ -93,10 +93,10 @@ export function track(target, type, key) {
  * 触发更新
  */
 export function trigger(target, type, key, value?, oldValue?) {
-  console.log('触发更新', target, key, targetMap);
+  // console.log('触发更新', target, key, targetMap);
 
   const depsMap = targetMap.get(target);
-  console.log('depsMap', depsMap);
+  // console.log('depsMap', depsMap);
   if (!depsMap) {
     return;
   }
@@ -156,7 +156,7 @@ export function trigger(target, type, key, value?, oldValue?) {
     }
   }
 
-  console.log('finalEffects', finalEffects);
+  // console.log('finalEffects', finalEffects);
 
   /**
    * 执行所有 effect
@@ -169,5 +169,5 @@ export function trigger(target, type, key, value?, oldValue?) {
       effect();
     }
   });
-  console.log('执行了 effect');
+  // console.log('执行了 effect');
 }

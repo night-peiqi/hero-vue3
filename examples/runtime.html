@@ -21,7 +21,7 @@
 
           setTimeout(() => {
             state.isFlag = true;
-          }, 3000);
+          }, 5000);
 
           // return {
           //   state,
@@ -41,7 +41,10 @@
                   [
                     h('div', { key: 'a' }, '熬夜佩奇a'),
                     h('div', { key: 'b' }, '熬夜佩奇b'),
-                    h('div', { key: 'c' }, '熬夜佩奇c')
+                    h('div', { key: 'c' }, '熬夜佩奇c'),
+                    h('div', { key: 'd' }, '熬夜佩奇d'),
+                    h('div', { key: 'h' }, '熬夜佩奇h'),
+                    h('div', { key: 'f' }, '熬夜佩奇f')
                   ]
                 )
               : h(
@@ -53,10 +56,11 @@
                     onClick: clickHandler
                   },
                   [
-                    h('div', { key: 'a' }, 'Alice-a'),
-                    h('div', { key: 'c' }, 'Alice-c'),
-                    h('div', { key: 'b' }, 'Alice-b'),
-                    h('div', { key: 'd' }, '熬夜佩奇d')
+                    h('div', { key: 'a' }, '熬夜佩奇a'),
+                    h('div', { key: 'c' }, '熬夜佩奇c'),
+                    h('div', { key: 'd' }, '熬夜佩奇d'),
+                    h('div', { key: 'b' }, '熬夜佩奇b'),
+                    h('div', { key: 'f' }, '熬夜佩奇f')
                   ]
                 );
           };

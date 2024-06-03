@@ -36,7 +36,7 @@ const createSetter = (shallow = false) => {
 
     // 设置新值
     const result = Reflect.set(target, key, value, receiver);
-    console.log('hasKey', hasKey);
+    // console.log('hasKey', hasKey);
     // 没有，代表新增，有，代表修改
     if (!hasKey) {
       trigger(target, TriggerOpTypes.ADD, key, value);

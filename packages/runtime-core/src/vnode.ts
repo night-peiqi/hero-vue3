@@ -13,7 +13,7 @@ interface IComponentType {
  * @returns
  */
 export function createVnode(type: any, props, children: any = null) {
-  log('/** 执行 createVnode **/', type, props, children);
+  // log('/** 执行 createVnode **/', type, props, children);
   // 判断是组件还是普通标签
   let shapeFlag = isString(type)
     ? ShapeFlags.ELEMENT

@@ -11,7 +11,7 @@ import { patchProps } from 'packages/runtime-dom/src/patchProps';
  * @returns 渲染器对象
  */
 export function createRenderer(renderOptionDom): any {
-  log('/** 执行 createRenderer 创建渲染器 **/', renderOptionDom);
+  // log('/** 执行 createRenderer 创建渲染器 **/', renderOptionDom);
   const {
     insert: hostInsert,
     remove: hostRemove,
@@ -96,9 +96,9 @@ export function createRenderer(renderOptionDom): any {
    * vue3 的 diff 算法，“双端比较”
    * 这种算法的基本思想是：同时从新旧两个数组的两端开始比较。如果从两端开始的节点都相同，那么就直接移动到下一个节点。如果不同，那么就尝试从另一端进行比较
    * 这种方法可以有效地处理节点的移动和重排序
-   * @param c1
-   * @param c2
-   * @param el
+   * @param c1 旧子节点
+   * @param c2 新子节点
+   * @param el 父节点
    */
   function patchKeyedChildren(c1, c2, el) {
     let i = 0;
@@ -152,6 +152,10 @@ export function createRenderer(renderOptionDom): any {
       let s1 = i;
       let s2 = i;
 
+      const toBePatched = e2 - s2 + 1; // 乱序新节点数量
+      const newIndexToOldIndexMap = new Array(toBePatched).fill(0); // 乱序新节点的索引映射
+      log('/** newIndexToOldIndexMap **/', newIndexToOldIndexMap);
+
       // 创建新子节点的 key 与索引的映射
       const keyToNewIndexMap = new Map();
 
@@ -160,9 +164,113 @@ export function createRenderer(renderOptionDom): any {
         const nextChild = c2[i];
         keyToNewIndexMap.set(nextChild.key, i);
       }
-
       log('/** keyToNewIndexMap **/', keyToNewIndexMap);
+
+      for (let i = s1; i <= e1; i++) {
+        const oldChild = c1[i];
+        const newIndex = keyToNewIndexMap.get(oldChild.key);
+        log('/** oldChild **/', oldChild, newIndex);
+        // 旧子节点在新子节点中不存在，则卸载
+        if (newIndex === undefined) {
+          unmount(oldChild);
+        } else {
+          // 新乱序节点在老乱序节点中的索引
+          newIndexToOldIndexMap[newIndex - s2] = i + 1;
+
+          patch(oldChild, c2[newIndex], el);
+        }
+      }
+      log('/** oldChild **/', newIndexToOldIndexMap);
+
+      // 最长递增子序列
+      const increasingNewIndexSequence = getSequence(newIndexToOldIndexMap);
+      log('/** increasingNewIndexSequence **/', increasingNewIndexSequence);
+
+      let j = increasingNewIndexSequence.length - 1;
+
+      for (let i = toBePatched - 1; i >= 0; i--) {
+        const nextIndex = s2 + i;
+        const nextChild = c2[nextIndex];
+        const anther = nextIndex + 1 < c2.length ? c2[nextIndex + 1].el : null;
+        if (newIndexToOldIndexMap[i] === 0) {
+          patch(null, nextChild, el, anther);
+        } else {
+          if (i !== increasingNewIndexSequence[j]) {
+            hostInsert(nextChild.el, el, anther);
+          } else {
+            j--;
+          }
+        }
+      }
     }
+  }
+
+  /**
+   * 获取最长递增子序列
+   * @param arr
+   * @returns
+   */
+  function getSequence(arr) {
+    let len = arr.length;
+    // result 用于保存最长递增子序列的索引
+    const result = [0];
+    let start;
+    let end;
+    // p 用于保存每个元素在最长递增子序列 result 中的前一个元素的索引
+    let p = arr.slice(0);
+
+    for (let i = 0; i < len; i++) {
+      // arrI 用于保存当前元素的值
+      const arrI = arr[i];
+
+      if (arrI !== 0) {
+        // 获取 result 中的最后一个元素的索引
+        const resultLastIndex = result[result.length - 1];
+
+        // 如果当前元素大于 result 中的最后一个元素，那么就将当前元素添加到 result 中
+        if (arr[resultLastIndex] < arrI) {
+          /**
+           * 根据当前索引 i，在 p 中设置对应项的值，这个值等于 i 在 result 中的前一个元素的索引
+           * p 中索引 i 在 result 中的前一个元素的索引
+           */
+          p[i] = resultLastIndex;
+          // 将当前元素的索引添加到 result 中
+          result.push(i);
+          continue;
+        } else {
+          // 否则，使用二分查找在 result 中找到当前元素应该插入的位置
+          start = 0;
+          end = result.length - 1;
+
+          while (start < end) {
+            const mid = start + (((end - start) / 2) | 0);
+
+            if (arr[result[mid]] < arrI) {
+              start = mid + 1;
+            } else {
+              end = mid;
+            }
+          }
+
+          // 如果当前元素小于 result 中的元素，那么就更新 result 和 p
+          if (arrI < arr[result[start]]) {
+            if (start > 0) {
+              p[i] = result[start - 1];
+            }
+            result[start] = i;
+          }
+        }
+      }
+    }
+
+    // 从后向前遍历 result，使用 p 来找到最长递增子序列的具体序列
+    let len1 = result.length;
+    let last = result[len1 - 1];
+    while (len1-- > 0) {
+      result[len1] = last;
+      last = p[last];
+    }
+    return result;
   }
 
   /**
@@ -258,7 +366,7 @@ export function createRenderer(renderOptionDom): any {
    */
   function processComponent(n1, n2, container) {
     if (n1 == null) {
-      log('/** 初始化组件 processComponent **/', n2);
+      // log('/** 初始化组件 processComponent **/', n2);
       // 初始化组件
       mountComponent(n2, container);
     } else {
@@ -285,9 +393,9 @@ export function createRenderer(renderOptionDom): any {
       if (!instance.isMounted) {
         const proxy = instance.proxy;
         // 执行 render 函数，返回虚拟dom
-        log('/** 初始化组件 setupRenderEffect **/', instance);
+        // log('/** 初始化组件 setupRenderEffect **/', instance);
         const subTree = (instance.subTree = instance.render.call(proxy, proxy));
-        log('/** 初始化组件 setupRenderEffect subTree **/', subTree);
+        // log('/** 初始化组件 setupRenderEffect subTree **/', subTree);
         // 将虚拟dom渲染到页面中
         patch(null, subTree, container);
         instance.isMounted = true;
@@ -298,7 +406,7 @@ export function createRenderer(renderOptionDom): any {
         const prevSubTree = instance.subTree;
         const nextSubTree = instance.render.call(proxy, proxy);
         instance.subTree = nextSubTree;
-        log('/** 更新组件 setupRenderEffect **/', prevSubTree, nextSubTree);
+        // log('/** 更新组件 setupRenderEffect **/', prevSubTree, nextSubTree);
         patch(prevSubTree, nextSubTree, container);
       }
     });
@@ -309,7 +417,7 @@ export function createRenderer(renderOptionDom): any {
   }
 
   function unmount(vnode) {
-    log('/** 执行 unmount **/', vnode);
+    // log('/** 执行 unmount **/', vnode);
     hostRemove(vnode.el);
   }
 
